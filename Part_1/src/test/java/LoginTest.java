@@ -258,6 +258,4 @@ public class LoginTest {
         login.returnLoginStatus("wrong", "wrong");
         assertEquals("Username or password incorrect, please try again.", login.getLoginStatus());
     }
-}   
-
-
+}
