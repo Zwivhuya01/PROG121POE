@@ -169,41 +169,10 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          load: true
-          tags: quickchat:latest
-      
-      - name: Test Docker image
-        run: |
-          docker run --rm quickchat:latest java -version
-
-  # Job 6: Deployment
-  deploy:
-    name: Deploy to GitHub Releases
-    runs-on: ubuntu-latest
-    needs: [build, cross-platform, docker]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    
-    steps:
-      - name: Download JAR artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: quickchat-jar
-          path: target/
-      
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: v1.0.${{ github.run_number }}
-          name: Release v1.0.${{ github.run_number }}
-          body: |
-            ## QuickChat Release v1.0.${{ github.run_number }}
-            
-            ### Features
-            - Automated build and test pipeline
-            - Multi-platform support
-            - Docker containerization
-            
-            ### Installation
-            Download the JAR file and run:
-            ```bash
-            java -jar poe-part-1-1.0-SNAPSHOT.jar
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/quickchat-poe:latest
+            ${{ secrets.DOCKER_USERNAME }}/quickchat-poe:${{ github.run_number }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
